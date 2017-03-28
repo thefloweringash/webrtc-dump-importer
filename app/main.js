@@ -1,52 +1,12 @@
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Import webrtc-internals dumps</title>
-        <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
-        <!-- highcharts is used under the terms of
-            http://shop.highsoft.com/faq/non-commercial
-        -->
-        <script src="//code.highcharts.com/highcharts.js"></script>
-        <style>
-body, body svg text {
-    font-family: monospace;
-}
-details[open] pre {
-    padding-left: 10px;
-    padding-bottom: 10px;
-}
-details[open] summary {
-    color: blue;
-}
-details.host summary:after {
-    content: ' (host)';
-}
-details.relay summary:after {
-    content: ' (relay)';
-}
-details.srflx summary:after {
-    content: ' (srflx)'
-}
+import Highcharts from 'highcharts';
 
-.candidatepairtable {
-    text-align: center;
-}
-.candidatepairtable td {
-    background-color: #ddd;
-    padding: 5px;
-}
-    ice.style['background-color'] = '#ddd';
-    ice.style['text-align'] = 'center';
-        </style>
-
-        <script>
 function doImport(evt) {
-  evt.target.disabled = 'disabled';
+  evt.target.disabled = 'm';
   var files = evt.target.files;
   var reader = new FileReader();
   reader.onload = (function(file) {
     return function(e) {
-      thelog = JSON.parse(e.target.result);
+      const thelog = JSON.parse(e.target.result);
       importUpdatesAndStats(thelog);
     };
   })(files[0]);
@@ -363,15 +323,5 @@ function importUpdatesAndStats(data) {
         }
     }
 }
-        </script>
-    </head>
-    <body>
-        <p>This is an import tool for dumps from chrome://webrtc-internals. See <a href="http://testrtc.com/webrtc-internals-parameters/">this blog post</a> for a lengthy description of what it does and how to interpret some of the data.
-        <form><input type="file" onchange="doImport(event)"></form>
-        <div><b>User Agent:</b><span id="userAgent"></span></div>
-        <div id="tables">
-        </div>
-        <div id="container" style="min-width: 95%; height: 400px; margin: 0 auto">
-        </div>
-    </body>
-</html>
+
+global.doImport = doImport;

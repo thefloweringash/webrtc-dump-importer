@@ -1,0 +1,27 @@
+body, body svg text {
+  font-family: monospace;
+}
+details[open] pre {
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+details[open] summary {
+  color: blue;
+}
+details.host summary:after {
+  content: ' (host)';
+}
+details.relay summary:after {
+  content: ' (relay)';
+}
+details.srflx summary:after {
+  content: ' (srflx)'
+}
+
+.candidatepairtable {
+  text-align: center;
+}
+.candidatepairtable td {
+  background-color: #ddd;
+  padding: 5px;
+}
