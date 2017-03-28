@@ -38,41 +38,21 @@ function createContainers(connid) {
     let head = document.createElement('tr');
     ice.appendChild(head);
 
-    el = document.createElement('td');
-    el.innerText = 'Local address';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Local type';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Remote address';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Remote type';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Requests sent';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Responses received';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Requests received';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Responses sent';
-    head.appendChild(el);
-
-    el = document.createElement('td');
-    el.innerText = 'Active Connection';
-    head.appendChild(el);
+    [
+        'Local address',
+        'Local type',
+        'Remote address',
+        'Remote type',
+        'Requests sent',
+        'Responses received',
+        'Requests received',
+        'Responses sent',
+        'Active Connection',
+    ].forEach((columnName) => {
+        const th = document.createElement('th');
+        th.innerText = columnName;
+        head.appendChild(th);
+    });
 
     container.appendChild(ice);
 
@@ -211,43 +191,23 @@ function importUpdatesAndStats(data) {
         for (const t of Object.keys(stun)) {
             console.log(t, stun[t]);
             const row = document.createElement('tr');
-            let el;
 
-            el = document.createElement('td');
-            el.innerText = stun[t].googLocalAddress;
-            row.appendChild(el);
+            [
+                'googLocalAddress',
+                'googLocalCandidateType',
+                'googRemoteAddress',
+                'googRemoteCandidateType',
+                'requestsSent',
+                'responsesReceived',
+                'requestsReceived',
+                'responsesSent',
+                'googActiveConnection',
+            ].forEach((statName) => {
+                const el = document.createElement('td');
+                el.innerText = stun[t][statName];
+                row.appendChild(el);
+            });
 
-            el = document.createElement('td');
-            el.innerText = stun[t].googLocalCandidateType;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].googRemoteAddress;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].googRemoteCandidateType;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].requestsSent;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].responsesReceived;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].requestsReceived;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].responsesSent;
-            row.appendChild(el);
-
-            el = document.createElement('td');
-            el.innerText = stun[t].googActiveConnection;
-            row.appendChild(el);
             /*
             el = document.createElement('td');
             el.innerText = stun[t].consentRequestsSent;

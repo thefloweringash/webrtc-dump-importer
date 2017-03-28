@@ -1,12 +1,15 @@
 body, body svg text {
   font-family: monospace;
 }
-details[open] pre {
-  padding-left: 10px;
-  padding-bottom: 10px;
-}
-details[open] summary {
-  color: blue;
+details[open] {
+  pre {
+    padding-left: 10px;
+    padding-bottom: 10px;
+  }
+
+  summary {
+    color: blue;
+  }
 }
 details.host summary:after {
   content: ' (host)';
@@ -20,8 +23,9 @@ details.srflx summary:after {
 
 .candidatepairtable {
   text-align: center;
-}
-.candidatepairtable td {
-  background-color: #ddd;
-  padding: 5px;
+
+  td {
+    background-color: #ddd;
+    padding: 5px;
+  }
 }
