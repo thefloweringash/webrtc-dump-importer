@@ -1,43 +1,41 @@
-import Highcharts from 'highcharts';
+import Highcharts from "highcharts";
 
 function doImport(evt) {
-  evt.target.disabled = 'm';
-  var files = evt.target.files;
-  var reader = new FileReader();
-  reader.onload = (function(file) {
-    return function(e) {
-      const thelog = JSON.parse(e.target.result);
-      importUpdatesAndStats(thelog);
+    evt.target.disabled = 'm';
+    const files = evt.target.files;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const thelog = JSON.parse(e.target.result);
+        importUpdatesAndStats(thelog);
     };
-  })(files[0]);
-  reader.readAsText(files[0]);
+    reader.readAsText(files[0]);
 }
 
-function createContainers(connid, url) {
-    var el;
-    var container = document.createElement('div');
+function createContainers(connid) {
+    let el;
+    const container = document.createElement('div');
     container.style.margin = '10px';
 
-    var url = document.createElement('div');
+    const url = document.createElement('div');
     container.appendChild(url);
 
-    var configuration = document.createElement('div');
+    const configuration = document.createElement('div');
     container.appendChild(configuration);
 
     // show state transitions, like in https://webrtc.github.io/samples/src/content/peerconnection/states
-    var signalingState = document.createElement('div');
+    const signalingState = document.createElement('div');
     signalingState.id = 'signalingstate_' + connid;
     signalingState.textContent = 'Signaling state:';
     container.appendChild(signalingState);
-    var iceConnectionState = document.createElement('div');
+    const iceConnectionState = document.createElement('div');
     iceConnectionState.id = 'iceconnectionstate_' + connid;
     iceConnectionState.textContent = 'ICE connection state:';
     container.appendChild(iceConnectionState);
 
     // for ice candidates
-    var ice = document.createElement('table');
+    const ice = document.createElement('table');
     ice.className = 'candidatepairtable';
-    var head = document.createElement('tr');
+    let head = document.createElement('tr');
     ice.appendChild(head);
 
     el = document.createElement('td');
@@ -78,7 +76,7 @@ function createContainers(connid, url) {
 
     container.appendChild(ice);
 
-    var table = document.createElement('table');
+    const table = document.createElement('table');
     head = document.createElement('tr');
     table.appendChild(head);
 
@@ -104,14 +102,14 @@ function createContainers(connid, url) {
 }
 
 function processTraceEvent(table, event) {
-    var row = document.createElement('tr');
-    var el = document.createElement('td');
+    const row = document.createElement('tr');
+    let el = document.createElement('td');
     el.setAttribute('nowrap', '');
     el.innerText = event.time;
     row.appendChild(el);
 
     // recreate the HTML of webrtc-internals
-    var details = document.createElement('details');
+    const details = document.createElement('details');
     el = document.createElement('summary');
     el.innerText = event.type;
     details.appendChild(el);
@@ -130,7 +128,7 @@ function processTraceEvent(table, event) {
         row.style.backgroundColor = 'red';
     }
     if (event.type === 'iceConnectionStateChange') {
-        switch(event.value) {
+        switch (event.value) {
         case 'ICEConnectionStateConnected':
         case 'ICEConnectionStateCompleted':
             row.style.backgroundColor = 'green';
@@ -142,7 +140,7 @@ function processTraceEvent(table, event) {
     }
 
     if (event.type === 'onIceCandidate' || event.type === 'addIceCandidate') {
-        var parts = event.value.split(',')[2].trim().split(' ');
+        const parts = event.value.split(',')[2].trim().split(' ');
         if (parts && parts.length >= 9 && parts[7] === 'typ') {
             details.classList.add(parts[8]);
         }
@@ -150,52 +148,47 @@ function processTraceEvent(table, event) {
     table.appendChild(row);
 }
 
-var graphs = {};
-var containers = {};
+const graphs = {};
+const containers = {};
 function importUpdatesAndStats(data) {
     document.getElementById('userAgent').innerText = data.userAgent;
-
-    var connection;
-    var connid, reportname, stat;
-    var t, comp;
-    var stats;
 
     // FIXME: also display GUM calls (can they be correlated to addStream?)
 
     // first, display the updateLog
-    for (connid in data.PeerConnections) {
-        var connection = data.PeerConnections[connid];
-        var container = createContainers(connid, connection.url);
+    for (const connid of Object.keys(data.PeerConnections)) {
+        let connection = data.PeerConnections[connid];
+        const container = createContainers(connid, connection.url);
 
         containers[connid].url.innerText = connection.url;
         containers[connid].configuration.innerText = 'Configuration: ' + JSON.stringify(connection.rtcConfiguration, null, ' ');
 
         document.getElementById('tables').appendChild(container);
 
-        connection.updateLog.forEach(function(event) {
+        connection.updateLog.forEach(function (event) {
             processTraceEvent(containers[connid].updateLog, event);
         });
-        connection.updateLog.forEach(function(event) {
+        connection.updateLog.forEach(function (event) {
             // update state displays
             if (event.type === 'iceConnectionStateChange') {
                 containers[connid].iceConnectionState.textContent += ' => ' + event.value;
             }
         });
-        connection.updateLog.forEach(function(event) {
+        connection.updateLog.forEach(function (event) {
             // FIXME: would be cool if a click on this would jump to the table row
             if (event.type === 'signalingStateChange') {
                 containers[connid].signalingState.textContent += ' => ' + event.value;
             }
         });
-        var stun = {};
-        for (reportname in connection.stats) {
+        const stun = {};
+        for (const reportname of Object.keys(connection.stats)) {
             if (reportname.indexOf('Conn-') === 0) {
-                t = reportname.split('-');
-                comp = t.pop();
+                let t = reportname.split('-');
+                const comp = t.pop();
                 t = t.join('-');
                 if (!stun[t]) stun[t] = {};
-                stats = JSON.parse(connection.stats[reportname].values);
-                switch(comp) {
+                const stats = JSON.parse(connection.stats[reportname].values);
+                switch (comp) {
                 case 'requestsSent':
                 case 'consentRequestsSent':
                 case 'responsesSent':
@@ -215,10 +208,10 @@ function importUpdatesAndStats(data) {
             }
         }
         console.log(stun);
-        for (t in stun) {
+        for (const t of Object.keys(stun)) {
             console.log(t, stun[t]);
-            var row = document.createElement('tr');
-            var el;
+            const row = document.createElement('tr');
+            let el;
 
             el = document.createElement('td');
             el.innerText = stun[t].googLocalAddress;
@@ -266,26 +259,26 @@ function importUpdatesAndStats(data) {
     }
 
     // then, update the stats displays
-    for (connid in data.PeerConnections) {
-        connection = data.PeerConnections[connid];
+    for (const connid of Object.keys(data.PeerConnections)) {
+        const connection = data.PeerConnections[connid];
         graphs[connid] = {};
-        var reportobj = {};
-        for (reportname in connection.stats) {
-            t = reportname.split('-');
-            comp = t.pop();
+        const reportobj = {};
+        for (const reportname of Object.keys(connection.stats)) {
+            const t = reportname.split('-');
+            const comp = t.pop();
 
-            stat = t.join('-');
+            const stat = t.join('-');
             if (!reportobj.hasOwnProperty(stat)) {
                 reportobj[stat] = [];
             }
             reportobj[stat].push([comp, JSON.parse(connection.stats[reportname].values)]);
         }
-        for (reportname in reportobj) {
+        for (const reportname of Object.keys(reportobj)) {
             // ignore useless graphs
             if (reportname.indexOf('Cand-') === 0 || reportname.indexOf('Channel') === 0) continue;
 
-            var series = [];
-            var reports = reportobj[reportname];
+            const series = [];
+            const reports = reportobj[reportname];
             reports.forEach(function (report) {
                 if (typeof(report[1][0]) !== 'number') return;
                 if (report[0] === 'bytesReceived' || report[0] === 'bytesSent') return;
@@ -297,10 +290,10 @@ function importUpdatesAndStats(data) {
                 });
             });
             if (series.length > 0) {
-                var d = document.createElement('div');
+                const d = document.createElement('div');
                 d.id = 'chart_' + Date.now();
                 document.getElementById('container').appendChild(d);
-                var graph = new Highcharts.Chart({
+                const graph = new Highcharts.Chart({
                     title: {
                         text: reportname + ' (connection ' + connid + ')'
                     },
@@ -314,7 +307,7 @@ function importUpdatesAndStats(data) {
                     */
                     chart: {
                         zoomType: 'x',
-                        renderTo : d.id
+                        renderTo: d.id
                     },
                     series: series
                 });
