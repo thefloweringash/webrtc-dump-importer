@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Import webrtc-internals dumps</title>
+        <!-- highcharts is used under the terms of
+            http://shop.highsoft.com/faq/non-commercial
+        -->
+        <script src="rtcstats.js"></script>
+        <style>
+    ice.style['background-color'] = '#ddd';
+    ice.style['text-align'] = 'center';
+        </style>
+
+    </head>
+    <body>
+        <form><input type="file" onchange="doImport(event)"></form>
+        <div><b>User Agent:</b><span id="userAgent"></span></div>
+        <div id="tables">
+        </div>
+        <div id="container" style="min-width: 95%; height: 400px; margin: 0 auto">
+        </div>
+    </body>
+</html>
