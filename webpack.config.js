@@ -39,6 +39,7 @@ module.exports = {
     target: 'web',
     entry: {
         main: ['./app/styles.less', './app/main.js'],
+        rtcstats: ['./app/styles.less', './app/rtcstats.js'],
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
